@@ -33,8 +33,8 @@ public class RatpackChannelInitializer extends ChannelInitializer<SocketChannel>
   private NettyHandlerAdapter nettyHandlerAdapter;
   private DefaultEventExecutorGroup eventExecutorGroup;
 
-  public RatpackChannelInitializer(int workerThreads, Handler handler, File baseDir) {
-    this.nettyHandlerAdapter = new NettyHandlerAdapter(handler, baseDir);
+  public RatpackChannelInitializer(int workerThreads, Handler handler, File baseDir, String publicUrl) {
+    this.nettyHandlerAdapter = new NettyHandlerAdapter(handler, baseDir,publicUrl);
 
     if (workerThreads > 0) {
       this.eventExecutorGroup = new DefaultEventExecutorGroup(workerThreads);

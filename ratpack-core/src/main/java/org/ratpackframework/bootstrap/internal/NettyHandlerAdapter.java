@@ -49,8 +49,9 @@ public class NettyHandlerAdapter extends ChannelInboundMessageHandlerAdapter<Ful
   private final Handler handler;
   private final RootContext rootContext;
   private Handler return404;
+  private String publicUrl;
 
-  public NettyHandlerAdapter(Handler handler, File baseDir) {
+  public NettyHandlerAdapter(Handler handler, File baseDir,String publicUrl) {
     this.handler = new ErrorCatchingHandler(handler);
     this.rootContext = new RootContext(
       ImmutableList.of(
@@ -62,6 +63,7 @@ public class NettyHandlerAdapter extends ChannelInboundMessageHandlerAdapter<Ful
     );
 
     return404 = new ClientErrorHandler(NOT_FOUND.code());
+    this.publicUrl = publicUrl;
   }
 
   public void messageReceived(ChannelHandlerContext ctx, FullHttpRequest nettyRequest) throws Exception {
@@ -78,7 +80,7 @@ public class NettyHandlerAdapter extends ChannelInboundMessageHandlerAdapter<Ful
     boolean keepAlive = version == HttpVersion.HTTP_1_1
         || (version == HttpVersion.HTTP_1_0 && "Keep-Alive".equalsIgnoreCase(nettyRequest.headers().get("Connection")));
 
-    Response response = new DefaultResponse(nettyResponse, ctx.channel(), keepAlive, version, nettyRequest);
+    Response response = new DefaultResponse(nettyResponse, ctx.channel(), keepAlive, version, nettyRequest, publicUrl);
     final Exchange exchange = new DefaultExchange(request, response, ctx, rootContext, return404);
 
     handler.handle(exchange);

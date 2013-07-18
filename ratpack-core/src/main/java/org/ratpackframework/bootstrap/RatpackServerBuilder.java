@@ -47,6 +47,8 @@ public class RatpackServerBuilder {
   private int port = DEFAULT_PORT;
   private InetAddress address;
 
+  private String publicUrl = null;
+
   /**
    * Create a new builder, with the given handler as the "application".
    *
@@ -147,7 +149,25 @@ public class RatpackServerBuilder {
   }
 
   private ChannelInitializer<SocketChannel> buildChannelInitializer() {
-    return new RatpackChannelInitializer(workerThreads, handler, baseDir);
+    return new RatpackChannelInitializer(workerThreads, handler, baseDir,publicUrl);
   }
 
+  /**
+   * The public url used for redirects.
+   *
+   * @return The public url.
+   */
+  @Nullable
+  public String getPublicUrl() {
+    return publicUrl;
+  }
+
+  /**
+   * Sets the public url used by redirects.
+   *
+   * @param publicUrl The public url.
+   */
+  public void setPublicUrl(String publicUrl) {
+    this.publicUrl = publicUrl;
+  }
 }

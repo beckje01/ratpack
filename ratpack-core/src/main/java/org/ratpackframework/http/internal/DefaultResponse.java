@@ -39,15 +39,17 @@ public class DefaultResponse implements Response {
   private final HttpVersion version;
   private final FullHttpRequest request;
   private boolean contentLengthSet;
+  private String publicUrl;
 
   private Set<Cookie> cookies;
 
-  public DefaultResponse(FullHttpResponse response, Channel channel, boolean keepAlive, HttpVersion version, FullHttpRequest request) {
+  public DefaultResponse(FullHttpResponse response, Channel channel, boolean keepAlive, HttpVersion version, FullHttpRequest request, String publicUrl) {
     this.response = response;
     this.channel = channel;
     this.keepAlive = keepAlive;
     this.version = version;
     this.request = request;
+    this.publicUrl = publicUrl;
   }
 
   public Status getStatus() {
@@ -253,8 +255,8 @@ public class DefaultResponse implements Response {
     boolean hasPublicHost = false;
 
     String host = "";
-    if (hasPublicHost) {
-      host = "http://publichost.com";
+    if (getPublicHost() != null) {
+      host = getPublicHost();
     } else {
       if (request != null) {
         if (request.headers().get("Host") != null) {
@@ -265,6 +267,10 @@ public class DefaultResponse implements Response {
     }
 
     return host;
+  }
+
+  private String getPublicHost() {
+    return publicUrl;
   }
 
   private String getParentPath(String path) {

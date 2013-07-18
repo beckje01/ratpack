@@ -25,6 +25,7 @@ abstract class RatpackGroovyScriptAppSpec extends InternalRatpackSpec {
 
   boolean compileStatic = false
   boolean reloadable = false
+  String publicUrl = null
 
   File getRatpackFile() {
     file("ratpack.groovy")
@@ -44,7 +45,7 @@ abstract class RatpackGroovyScriptAppSpec extends InternalRatpackSpec {
 
   @Override
   protected RatpackServer createServer() {
-    RatpackScriptApp.ratpack(ratpackFile, dir, 0, null, compileStatic, reloadable)
+    RatpackScriptApp.ratpack(ratpackFile, dir, 0, null, compileStatic, reloadable,publicUrl)
   }
 
 }

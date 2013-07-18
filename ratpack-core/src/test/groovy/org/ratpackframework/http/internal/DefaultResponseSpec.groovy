@@ -34,7 +34,7 @@ class DefaultResponseSpec extends Specification {
     def channel = Mock(Channel)
     request = Mock(FullHttpRequest)
 
-    response = new DefaultResponse(nettyResponse, channel, true, HttpVersion.HTTP_1_1, request)
+    response = new DefaultResponse(nettyResponse, channel, true, HttpVersion.HTTP_1_1, request,null)
   }
 
 

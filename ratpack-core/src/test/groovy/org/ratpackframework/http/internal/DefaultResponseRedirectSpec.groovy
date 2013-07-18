@@ -18,6 +18,7 @@ package org.ratpackframework.http.internal
 
 import com.jayway.restassured.RestAssured
 import com.jayway.restassured.specification.RequestSpecification
+import org.ratpackframework.groovy.bootstrap.RatpackScriptApp
 import org.ratpackframework.test.groovy.RatpackGroovyScriptAppSpec
 
 class DefaultResponseRedirectSpec extends RatpackGroovyScriptAppSpec {
@@ -94,4 +95,50 @@ class DefaultResponseRedirectSpec extends RatpackGroovyScriptAppSpec {
     resp.getHeader("Location") == "http://${server.bindHost}:${server.bindPort}/other"
   }
 
+  def "Server root path redirect with public url"() {
+    given:
+    publicUrl = "http://example.com"
+    app {
+      script """
+        ratpack {
+          handlers {
+            get {
+              response.redirect("/index")
+            }
+          }
+        }
+      """
+    }
+
+    when:
+    def resp = get("")
+
+    then:
+    resp.statusCode == 302
+    resp.getHeader("Location") == publicUrl+"/index"
+
+  }
+
+  def "Server Relative Path Redirect with public url"() {
+    given:
+    publicUrl="http://example.com"
+    app {
+      script """
+        ratpack {
+          handlers {
+            get("index") {
+              response.redirect("other")
+            }
+          }
+        }
+      """
+    }
+    when:
+
+    def resp = get("index")
+
+    then:
+    resp.statusCode == 302
+    resp.getHeader("Location") == publicUrl+"/other"
+  }
 }

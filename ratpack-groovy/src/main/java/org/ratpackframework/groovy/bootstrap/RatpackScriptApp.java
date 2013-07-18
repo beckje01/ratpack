@@ -84,6 +84,15 @@ public abstract class RatpackScriptApp {
      * <b>Value:</b> {@value} - (boolean)
      */
     public static final String COMPILE_STATIC = "ratpack.compileStatic";
+
+    /**
+     * What public URL should be used. This will be used to calculate absolute path for redirects.
+     * Example http://example.com
+     *
+     * <p>
+     * <b>Value:</b> {@value} - (String)
+     */
+    public static final String PUBLIC_URL = "ratpack.publicURL";
   }
 
   private RatpackScriptApp() {}
@@ -130,8 +139,9 @@ public abstract class RatpackScriptApp {
 
     boolean reloadable = Boolean.parseBoolean(properties.getProperty(Property.RELOADABLE, "false"));
     boolean compileStatic = Boolean.parseBoolean(properties.getProperty(Property.COMPILE_STATIC, "false"));
+    String publicUrl = System.getProperty(Property.PUBLIC_URL);
 
-    return ratpack(script, script.getAbsoluteFile().getParentFile(), port, address, compileStatic, reloadable);
+    return ratpack(script, script.getAbsoluteFile().getParentFile(), port, address, compileStatic, reloadable, publicUrl);
   }
 
   /**
@@ -152,14 +162,16 @@ public abstract class RatpackScriptApp {
    * @param address The address to listen for requests on
    * @param compileStatic Whether or not to compile the script statically
    * @param reloadable Whether or not to watch for changes to the script at runtime, and reload the application accordingly
+   * @param publicUrl Public url to use for redirects
    * @return A not yet started Ratpack server
    */
-  public static RatpackServer ratpack(File script, File baseDir, int port, InetAddress address, boolean compileStatic, boolean reloadable) {
+  public static RatpackServer ratpack(File script, File baseDir, int port, InetAddress address, boolean compileStatic, boolean reloadable, String publicUrl) {
     Handler scriptBackedApp = new ScriptBackedApp(script, new GroovyKitAppFactory(), compileStatic, reloadable);
 
     RatpackServerBuilder builder = new RatpackServerBuilder(scriptBackedApp, baseDir);
     builder.setPort(port);
     builder.setAddress(address);
+    builder.setPublicUrl(publicUrl);
 
     return builder.build();
   }
