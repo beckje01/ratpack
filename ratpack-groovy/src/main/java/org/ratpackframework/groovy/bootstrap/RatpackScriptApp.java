@@ -84,6 +84,15 @@ public abstract class RatpackScriptApp {
      * <b>Value:</b> {@value} - (boolean)
      */
     public static final String COMPILE_STATIC = "ratpack.compileStatic";
+
+    /**
+     * What public URL should be used. This will be used to calculate absolute path for redirects.
+     * Example http://example.com
+     *
+     * <p>
+     * <b>Value:</b> {@value} - (String)
+     */
+    public static final String PUBLIC_URL = "ratpack.publicURL";
   }
 
   private RatpackScriptApp() {}

@@ -28,6 +28,10 @@ class DefaultResponseRedirectSpec extends RatpackGroovyScriptAppSpec {
     RestAssured.with().urlEncodingEnabled(false).redirects().follow(false)
   }
 
+  def cleanupSpec(){
+    System.clearProperty("ratpack.publicURL")
+  }
+
   def "Absolute Path Redirect"() {
     given:
     app {
@@ -92,6 +96,55 @@ class DefaultResponseRedirectSpec extends RatpackGroovyScriptAppSpec {
     then:
     resp.statusCode == 302
     resp.getHeader("Location") == "http://${server.bindHost}:${server.bindPort}/other"
+  }
+
+  def "Server root path redirect with public url"() {
+    given:
+    def publicUrl = "http://example.com"
+    System.setProperty("ratpack.publicURL", publicUrl)
+    app {
+      script """
+        ratpack {
+          handlers {
+            get {
+              response.redirect("/index")
+            }
+          }
+        }
+      """
+    }
+
+    when:
+    def resp = get("")
+
+    then:
+    resp.statusCode == 302
+    resp.getHeader("Location") == publicUrl + "/index"
+
+  }
+
+  def "Server Relative Path Redirect with public url"() {
+    given:
+    def publicUrl = "http://example.com"
+    System.setProperty("ratpack.publicURL", publicUrl)
+    app {
+      script """
+        ratpack {
+          handlers {
+            get("index") {
+              response.redirect("other")
+            }
+          }
+        }
+      """
+    }
+    when:
+
+    def resp = get("index")
+
+    then:
+    resp.statusCode == 302
+    resp.getHeader("Location") == publicUrl + "/other"
   }
 
 }

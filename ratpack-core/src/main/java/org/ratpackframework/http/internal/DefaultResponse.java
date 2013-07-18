@@ -250,11 +250,10 @@ public class DefaultResponse implements Response {
    * @return The host if it can be found
    */
   private String getHost() {
-    boolean hasPublicHost = false;
 
     String host = "";
-    if (hasPublicHost) {
-      host = "http://publichost.com";
+    if (getPublicHost()!=null) {
+      host = getPublicHost();
     } else {
       if (request != null) {
         if (request.headers().get("Host") != null) {
@@ -279,6 +278,10 @@ public class DefaultResponse implements Response {
       parentPath = "/" + parentPath;
     }
     return parentPath;
+  }
+
+  private String getPublicHost(){
+    return System.getProperty("ratpack.publicURL");
   }
 
 }
